@@ -32,15 +32,14 @@ class TaskRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def update(self, request, *args, **kwargs):
         
-        try:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)  
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
-        except Task.DoesNotExist:
-            raise NotFound(detail="Task not found", code=status.HTTP_404_NOT_FOUND)
+        instance = self.get_object()  
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK) 
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         
@@ -49,4 +48,4 @@ class TaskRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             instance.delete()
             return Response({"message": "Task deleted successfully"}, status=status.HTTP_204_NO_CONTENT)  
         except Task.DoesNotExist:
-            raise NotFound(detail="Task not found", code=status.HTTP_404_NOT_FOUND)  # 
+            raise NotFound(detail="Task not found", code=status.HTTP_404_NOT_FOUND)  
